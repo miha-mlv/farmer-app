@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_farmer"
+    app:startDestination="@id/myProductFragment">
+
+    <fragment
+        android:id="@+id/addNewProductFragment"
+        android:name="com.example.farmer.farmer.AddNewProductFragment"
+        android:label="fragment_add_new_product"
+        tools:layout="@layout/fragment_add_new_product" >
+        <action
+            android:id="@+id/action_addNewProductFragment_to_profileFragment2"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_addNewProductFragment_to_myProductFragment"
+            app:destination="@id/myProductFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myProductFragment"
+        android:name="com.example.farmer.farmer.MyProductFragment"
+        android:label="fragment_my_product"
+        tools:layout="@layout/fragment_my_product" >
+        <action
+            android:id="@+id/action_myProductFragment_to_addNewProductFragment2"
+            app:destination="@id/addNewProductFragment" />
+        <action
+            android:id="@+id/action_myProductFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.farmer.farmer.ProfileFarmerFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_addNewProductFragment"
+            app:destination="@id/addNewProductFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_myProductFragment"
+            app:destination="@id/myProductFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_pointSaleFragment"
+            app:destination="@id/pointSaleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pointSaleFragment"
+        android:name="com.example.farmer.farmer.PointSaleFragment"
+        android:label="fragment_poin_sale"
+        tools:layout="@layout/fragment_poin_sale" >
+        <action
+            android:id="@+id/action_pointSaleFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_pointSaleFragment_to_addPointSaleFragment"
+            app:destination="@id/addPointSaleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPointSaleFragment"
+        android:name="com.example.farmer.farmer.AddPointSaleFragment"
+        android:label="fragment_add_point_sale"
+        tools:layout="@layout/fragment_add_point_sale" />
+</navigation>

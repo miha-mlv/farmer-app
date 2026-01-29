@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.farmer.common.auth.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
+        <action
+            android:id="@+id/action_loginFragment_to_verifEmailFragment"
+            app:destination="@id/verifEmailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.farmer.common.auth.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_registerFragment_to_verifEmailFragment2"
+            app:destination="@id/verifEmailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifEmailFragment"
+        android:name="com.example.farmer.common.auth.VerifEmailFragment"
+        android:label="fragment_verif_email"
+        tools:layout="@layout/fragment_verif_email" >
+        <argument
+            android:name="userEmail"
+            app:argType="string"
+            android:defaultValue="none"/>
+        <action
+            android:id="@+id/action_verifEmailFragment_to_loginFragment2"
+            app:destination="@id/loginFragment" />
+    </fragment>
+</navigation>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/myProductFragment"
+        android:icon="@drawable/icon_my_product"
+        android:title="Мои товары"/>
+
+    <item
+        android:id="@+id/addNewProductFragment"
+        android:icon="@drawable/icon_add_new_product"
+        android:title="Добавить товар"/>
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/icon_profile"
+        android:title="Профиль"/>
+</menu>
