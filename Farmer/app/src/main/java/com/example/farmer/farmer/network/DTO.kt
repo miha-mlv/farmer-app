@@ -55,3 +55,18 @@ data class User(
 
     val farmName: String? = null
 )
+
+data class PointOfSaleRequest(
+    val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    val address: String
+)
+
+data class PointOfSale(
+    val id: Long,
+    val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    val address: String
+)

@@ -5,14 +5,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.manager.Lifecycle
 import com.example.farmer.R
 import com.example.farmer.databinding.FragmentPoinSaleBinding
+import com.example.farmer.farmer.adapter.OnPointClickListener
+import com.example.farmer.farmer.adapter.PointOfSaleAdapter
+import com.example.farmer.farmer.network.PointOfSale
+import kotlinx.coroutines.launch
 import kotlin.getValue
 
 
-class PointSaleFragment : Fragment() {
+class PointSaleFragment : Fragment(), OnPointClickListener {
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
@@ -20,6 +29,7 @@ class PointSaleFragment : Fragment() {
                 ?: throw Exception("Нету apllication для вьюмодели(фермер)")
         )
     }
+    private lateinit var adapter: PointOfSaleAdapter
     private var _binding: FragmentPoinSaleBinding? = null
     private val binding get() = _binding!!
 
@@ -44,12 +54,51 @@ class PointSaleFragment : Fragment() {
         binding.btnAddPoint.setOnClickListener {
             findNavController().navigate(R.id.action_pointSaleFragment_to_addPointSaleFragment)
         }
+//        val pointsList = viewModel.getPoints()
+        setupAdapter()
+        observeViewModels()
+        viewModel.getPoints()
+    }
+
+    private fun observeViewModels(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED){
+                launch {
+                    viewModel.pointOfSale.collect { pointOfSales ->
+                        adapter.updateData(pointOfSales)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupAdapter(){
+        adapter = PointOfSaleAdapter(mutableListOf(), this)
+        binding.rvPoints.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPoints.adapter = adapter
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
+
+    override fun onDeleteClick(
+        point: PointOfSale,
+        position: Int
+    ) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Удаление")
+            .setMessage("Вы точно хотите удалить точку ${point.name}?")
+            .setPositiveButton("Да") { _, _ ->
+                viewModel.deletePoint(point.id)
+                adapter.removeItem(position)
+            }
+            .setNegativeButton("Нет", null)
+            .show()
+    }
+
 
     companion object {
         @JvmStatic

@@ -14,6 +14,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.farmer.databinding.FragmentAddPointSaleBinding
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -41,6 +44,9 @@ import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.launch
 
 
 class AddPointSaleFragment : Fragment(), CameraListener {
@@ -87,6 +93,29 @@ class AddPointSaleFragment : Fragment(), CameraListener {
         setupUserLocationLayer()
         setupListeners()
         smartLocationFetch() // Пытаемся найти пользователя при входе
+        observeViewModels()
+    }
+
+    private fun observeViewModels(){
+        viewLifecycleOwner.lifecycleScope.launch{
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                launch {
+                    viewModel.isSuccess.collect { _ ->
+                        Toast.makeText(requireActivity(), "Точка успешно сохранена", Toast.LENGTH_LONG).show()
+                    }
+                }
+                launch {
+                    viewModel.error.collect { errorMessage ->
+                        Toast.makeText(requireActivity(), "Ошибка: $errorMessage", Toast.LENGTH_LONG).show()
+                    }
+                }
+                launch {
+                    viewModel.isLoading.collect{
+                        //Отображение прогресс бара
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -213,12 +242,12 @@ class AddPointSaleFragment : Fragment(), CameraListener {
      * Диалог для ввода названия точки перед сохранением
      */
     private fun showAddPointNameDialog(address: String) {
-        val editText = EditText(requireContext()).apply { hint = "Название (н-р: Моя ферма)" }
+        val editText = EditText(requireContext()).apply { hint = "Название точки продажи" }
 
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Сохранить точку")
             .setView(editText)
-            .setPositiveButton("ОК") { _, _ ->
+            .setPositiveButton("Сохранить") { _, _ ->
                 val name = editText.text.toString()
                 val coords = binding.mapView.mapWindow.map.cameraPosition.target
                 savePoint(name, address, coords)
@@ -227,8 +256,7 @@ class AddPointSaleFragment : Fragment(), CameraListener {
     }
 
     private fun savePoint(name: String, address: String, point: Point) {
-        // viewModel.addPoint(name, address, point.latitude, point.longitude)
-        Toast.makeText(context, "Точка $name сохранена", Toast.LENGTH_SHORT).show()
+        viewModel.addPoint(name, address, point.latitude, point.longitude)
         parentFragmentManager.popBackStack()
     }
 

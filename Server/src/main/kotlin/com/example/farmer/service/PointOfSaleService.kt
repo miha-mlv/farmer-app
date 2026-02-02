@@ -14,12 +14,13 @@ class PointOfSaleService(
     private val posRepository: PointOfSaleRepository,
     private val productRepository: ProductRepository,
     private val userRepository: UserRepository,
+    private val jwtService: JwtService
 ) {
 
     // Сохранение точки продажи
     @Transactional
-    fun createPointOfSale(request: PointOfSaleRequest, userEmail: String): PointOfSale {
-        val farmer = userRepository.findByEmail(userEmail)
+    fun createPointOfSale(request: PointOfSaleRequest, token: String): PointOfSale {
+        val farmer = userRepository.findByEmail(jwtService.extractEmail(token)!!)
 
         val pos = PointOfSale(
             name = request.name,
@@ -34,8 +35,8 @@ class PointOfSaleService(
 
 
     // Получение списка точек продаж фермера
-    fun getFarmerPoints(userEmail: String): List<PointOfSale> {
-        val farmer = userRepository.findByEmail(userEmail)
+    fun getFarmerPoints(token: String): List<PointOfSale> {
+        val farmer = userRepository.findByEmail(jwtService.extractEmail(token)!!)
         return posRepository.findAllByFarmer(farmer.get())
     }
 
@@ -60,6 +61,12 @@ class PointOfSaleService(
         }
 
         return posRepository.save(pos)
+    }
+
+    @Transactional
+    fun deletePOS(id: Long, token: String){
+        val pos = posRepository.findById(id).orElseThrow()
+        posRepository.delete(pos)
     }
 
 

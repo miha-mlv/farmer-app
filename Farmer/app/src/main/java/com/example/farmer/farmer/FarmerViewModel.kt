@@ -13,6 +13,8 @@ import com.example.farmer.common.network.AuthApi
 import com.example.farmer.common.network.FarmerProfile
 import com.example.farmer.common.util.TokenManager
 import com.example.farmer.farmer.network.FarmerApi
+import com.example.farmer.farmer.network.PointOfSale
+import com.example.farmer.farmer.network.PointOfSaleRequest
 import com.example.farmer.farmer.network.Product
 import com.example.farmer.farmer.network.ProductRequest
 import com.example.farmer.farmer.network.RetrofitClientFarmer
@@ -42,6 +44,8 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
     val products = _products.asStateFlow()
     private val _profileData = MutableSharedFlow<FarmerProfile>()
     val profileData = _profileData.asSharedFlow()
+    private val _pointsOfSale = MutableStateFlow<List<PointOfSale>>(emptyList())
+    val pointOfSale = _pointsOfSale.asStateFlow()
 
     fun saveProduct(productData: RequestBody, imageParts: List<MultipartBody.Part>) {
         viewModelScope.launch {
@@ -113,6 +117,70 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
                 }
             } catch (e: Exception) {
                 _error.emit("Ошибка сети при загрузке профиля")
+            }
+        }
+    }
+
+    fun addPoint(namePoint: String, addressPoint: String, latPoint: Double, lonPoint: Double){
+        _isLoading.value = true
+        viewModelScope.launch {
+            try{
+                val request = PointOfSaleRequest(
+                    name = namePoint,
+                    address = addressPoint,
+                    latitude = latPoint,
+                    longitude = lonPoint
+                )
+                Log.d("token:", tokenManager.getToken()!!)
+                val response = api.savePoint(request, tokenManager.getToken()!!)
+                if(response.isSuccessful){
+                    _isSuccess.emit(Unit)
+                }else{
+                    _error.emit("Ошибка добавления точки про")
+                }
+            }catch (e: Exception){
+                _error.emit("Ошибка сети при сохранении точки продажи")
+            }finally {
+                _isLoading.value = false
+            }
+        }
+
+    }
+
+    fun deletePoint(id: Long){
+        val token = tokenManager.getToken()!!
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val response = api.deletePoint(id, token)
+                if(response.isSuccessful){
+                    _isSuccess.emit(Unit)
+                }else{
+                    _error.emit("Ошибка удаления точки продажи")
+                }
+            }catch (e: Exception){
+                _error.emit("Ошибка: ${e.message}")
+            }finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getPoints(){
+        _isLoading.value = true
+        viewModelScope.launch {
+            try{
+                val token = tokenManager.getToken().toString()
+                Log.d("token getPoints", token)
+                val response = api.getMyPoint(token)
+                if(response.isSuccessful){
+                    _pointsOfSale.value = response.body() ?: emptyList()
+                    _isSuccess.emit(Unit)
+                }
+            }catch(e: Exception){
+                _error.emit("Ошибка: ${e.message}")
+            }finally {
+                _isLoading.value = false
             }
         }
     }

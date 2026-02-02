@@ -48,10 +48,12 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchPointStatus"
+        <TextView
+            android:id="@+id/tvDeletePoint"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/deletePOS"
+            android:textColor="#ca3a27"/>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -3,13 +3,16 @@ package com.example.farmer.farmer.network
 import com.example.farmer.common.network.FarmerProfile
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.w3c.dom.Entity
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FarmerApi {
@@ -29,5 +32,17 @@ interface FarmerApi {
     suspend fun getProfile(
         @Header("Authorization") request: String
     ): Response<FarmerProfile>
+
+    @POST("/api/farmer/pos")
+    suspend fun savePoint(
+        @Body request: PointOfSaleRequest,
+        @Header("token") token: String
+    ): Response<Entity>
+
+    @GET("/api/farmer/pos/my")
+    suspend fun getMyPoint(@Header("token") token: String): Response<List<PointOfSale>>
+
+    @DELETE("/api/farmer/pos/{id}")
+    suspend fun deletePoint(@Path("id") id: Long, @Header("token") token: String): Response<Unit>
 
 }
