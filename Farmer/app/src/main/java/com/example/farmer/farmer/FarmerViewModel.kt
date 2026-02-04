@@ -37,6 +37,7 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading = _isLoading.asStateFlow()
     private val _isSuccess = MutableSharedFlow<Unit>()
+    var isSaleStarted: Boolean = false
     val isSuccess = _isSuccess.asSharedFlow()
     private val _error = MutableSharedFlow<String>()
     val error = _error.asSharedFlow()

@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,17 +19,22 @@ import com.example.farmer.common.auth.MainActivity
 import com.example.farmer.common.util.TokenManager
 import com.example.farmer.customer.MainCustomerActivity
 import com.example.farmer.databinding.FragmentProfileBinding
+import com.example.farmer.farmer.network.PointOfSale
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
 
 class ProfileFarmerFragment : Fragment() {
 
-    private val tokenManager: TokenManager by lazy{
+    private val tokenManager: TokenManager by lazy {
         TokenManager(activity?.application ?: throw Exception("Ошибка токен менеджера"))
     }
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    private var arrPoints = listOf<PointOfSale>()
+    private var arrAddresses = listOf<String>()
+    private var selectedPointOfSaleId: Int? = null
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
@@ -50,9 +58,16 @@ class ProfileFarmerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setOption()
+        //Возможно можно убрать и достававать только при активации точки
+        binding.autoCompleteAddress.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                selectedPointOfSaleId = position
+            }
         binding.btnLogOut.setOnClickListener { setOnBtnLogOut() }
         observerOnViewModel()
         viewModel.getProfile()
+        viewModel.getPoints()
+        setListenerSwitch()
 
 
     }
@@ -62,19 +77,59 @@ class ProfileFarmerFragment : Fragment() {
         _binding = null
     }
 
-    private fun observerOnViewModel(){
+    private fun setListenerSwitch() {
+        binding.switchStatus.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (selectedPointOfSaleId == null) {
+                    Toast.makeText(context, "Сначала выберите точку продажи!", Toast.LENGTH_LONG)
+                        .show()
+                    binding.switchStatus.isChecked = false
+                } else {
+                    val selectedPos = arrPoints[selectedPointOfSaleId!!]
+                    val action = ProfileFarmerFragmentDirections.actionProfileFragmentToProductsBottomSheetFragment(
+                        posId = selectedPos.id,
+                        posName = selectedPos.address
+                    )
+                    findNavController().navigate(action)
+                }
+            } else{
+                //Переключил в неактивный
+            }
+        }
+    }
+
+    private fun selectedPointsOfSaleClick() {
+
+    }
+
+    private fun observerOnViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.profileData.collect { profile ->
                         binding.tvFarmName.text = profile.farmName
 //                        binding.tvLocation = profile.location
                     }
                 }
+
+                launch {
+                    viewModel.pointOfSale.collect { pointOfSales ->
+                        arrPoints = pointOfSales
+                        arrAddresses = pointOfSales.map { it.address }
+
+                        val adapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_dropdown_item_1line,
+                            arrAddresses
+                        )
+                        binding.autoCompleteAddress.setAdapter(adapter)
+                    }
+                }
             }
         }
     }
-    private fun setOnBtnLogOut(){
+
+    private fun setOnBtnLogOut() {
         tokenManager.logout()
         startActivity(
             Intent(
@@ -85,8 +140,8 @@ class ProfileFarmerFragment : Fragment() {
         requireActivity().finish()
     }
 
-    private fun setOption(){
-        with(binding){
+    private fun setOption() {
+        with(binding) {
             itemPersonalInfo.optionTitle.text = "Личные данные"
             itemPersonalInfo.optionIcon.setImageResource(R.drawable.icon_profile)
 

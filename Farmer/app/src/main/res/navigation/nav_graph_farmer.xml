@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_profileFragment_to_pointSaleFragment"
             app:destination="@id/pointSaleFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_productsBottomSheetFragment"
+            app:destination="@id/productsBottomSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/pointSaleFragment"
@@ -61,4 +64,18 @@
         android:name="com.example.farmer.farmer.AddPointSaleFragment"
         android:label="fragment_add_point_sale"
         tools:layout="@layout/fragment_add_point_sale" />
+    <dialog
+        android:id="@+id/productsBottomSheetFragment"
+        android:name="com.example.farmer.farmer.ProductsBottomSheetFragment"
+        android:label="fragment_products_bottom_sheet"
+        tools:layout="@layout/fragment_products_bottom_sheet">
+        <argument
+            android:name="posId"
+            app:argType="long" />
+
+        <argument
+            android:name="posName"
+            app:argType="string" />
+    </dialog>
+
 </navigation>
