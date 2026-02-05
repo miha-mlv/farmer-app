@@ -70,3 +70,8 @@ data class PointOfSale(
     val longitude: Double,
     val address: String
 )
+
+data class PosStatusRequest(
+    val isActive: Boolean,
+    val productsIds: List<Long>? = null
+)

@@ -42,20 +42,20 @@ class PointOfSaleService(
 
     // Обновление статуса и списка товаров
     @Transactional
-    fun updateStatusAndProducts(posId: Long, request: PosStatusRequest, userEmail: String): PointOfSale {
+    fun updateStatusAndProducts(posId: Long, request: PosStatusRequest, token: String): PointOfSale {
         val pos = posRepository.findById(posId)
             .orElseThrow { NoSuchElementException("Точка с ID $posId не найдена") }
 
         // Проверка безопасности: только владелец может менять данные
-        if (pos.farmer.email != userEmail) {
+        if (pos.farmer.email != jwtService.extractEmail(token)) {
             throw IllegalAccessException("У вас нет прав для изменения этой точки")
         }
 
         pos.isActive = request.isActive
 
         // Если точка активируется, привязываем товары
-        if (request.isActive && request.productIds != null) {
-            val products = productRepository.findAllById(request.productIds)
+        if (request.isActive && request.productsIds != null) {
+            val products = productRepository.findAllById(request.productsIds)
             // Обновляем Many-to-Many связь
             pos.products = products.toMutableSet()
         }

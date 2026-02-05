@@ -42,10 +42,10 @@ class PointOfSaleController(private val posService: PointOfSaleService) {
     fun updateStatus(
         @PathVariable id: Long,
         @RequestBody request: PosStatusRequest,
-        principal: Principal
+        @RequestHeader("token")token: String
     ): ResponseEntity<PointOfSale> {
         return try {
-            val updatedPos = posService.updateStatusAndProducts(id, request, principal.name)
+            val updatedPos = posService.updateStatusAndProducts(id, request, token)
             ResponseEntity.ok(updatedPos)
         } catch (e: IllegalAccessException) {
             ResponseEntity.status(HttpStatus.FORBIDDEN).build()

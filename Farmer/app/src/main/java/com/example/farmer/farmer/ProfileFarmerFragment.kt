@@ -86,14 +86,22 @@ class ProfileFarmerFragment : Fragment() {
                     binding.switchStatus.isChecked = false
                 } else {
                     val selectedPos = arrPoints[selectedPointOfSaleId!!]
-                    val action = ProfileFarmerFragmentDirections.actionProfileFragmentToProductsBottomSheetFragment(
-                        posId = selectedPos.id,
-                        posName = selectedPos.address
-                    )
+                    val action =
+                        ProfileFarmerFragmentDirections.actionProfileFragmentToProductsBottomSheetFragment(
+                            posId = selectedPos.id,
+                            posName = selectedPos.address
+                        )
                     findNavController().navigate(action)
                 }
-            } else{
-                //Переключил в неактивный
+            } else {
+                if (selectedPointOfSaleId == null) {
+                    Toast.makeText(context, "Сначала выберите точку продажи!", Toast.LENGTH_LONG)
+                        .show()
+                    binding.switchStatus.isChecked = false
+                } else {
+                    val selectedPos = arrPoints[selectedPointOfSaleId!!]
+                    viewModel.activatePOS(selectedPos.id, listOf(), false)
+                }
             }
         }
     }
@@ -123,6 +131,13 @@ class ProfileFarmerFragment : Fragment() {
                             arrAddresses
                         )
                         binding.autoCompleteAddress.setAdapter(adapter)
+                    }
+                }
+
+                launch {
+                    viewModel.isSuccess.collect {
+                        Toast.makeText(context, "деактивация точки продажи", Toast.LENGTH_LONG)
+                            .show()
                     }
                 }
             }

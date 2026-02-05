@@ -15,6 +15,7 @@ import com.example.farmer.common.util.TokenManager
 import com.example.farmer.farmer.network.FarmerApi
 import com.example.farmer.farmer.network.PointOfSale
 import com.example.farmer.farmer.network.PointOfSaleRequest
+import com.example.farmer.farmer.network.PosStatusRequest
 import com.example.farmer.farmer.network.Product
 import com.example.farmer.farmer.network.ProductRequest
 import com.example.farmer.farmer.network.RetrofitClientFarmer
@@ -38,6 +39,7 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
     val isLoading = _isLoading.asStateFlow()
     private val _isSuccess = MutableSharedFlow<Unit>()
     var isSaleStarted: Boolean = false
+
     val isSuccess = _isSuccess.asSharedFlow()
     private val _error = MutableSharedFlow<String>()
     val error = _error.asSharedFlow()
@@ -122,10 +124,10 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
         }
     }
 
-    fun addPoint(namePoint: String, addressPoint: String, latPoint: Double, lonPoint: Double){
+    fun addPoint(namePoint: String, addressPoint: String, latPoint: Double, lonPoint: Double) {
         _isLoading.value = true
         viewModelScope.launch {
-            try{
+            try {
                 val request = PointOfSaleRequest(
                     name = namePoint,
                     address = addressPoint,
@@ -134,52 +136,74 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
                 )
                 Log.d("token:", tokenManager.getToken()!!)
                 val response = api.savePoint(request, tokenManager.getToken()!!)
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     _isSuccess.emit(Unit)
-                }else{
+                } else {
                     _error.emit("Ошибка добавления точки про")
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 _error.emit("Ошибка сети при сохранении точки продажи")
-            }finally {
+            } finally {
                 _isLoading.value = false
             }
         }
 
     }
 
-    fun deletePoint(id: Long){
+    fun deletePoint(id: Long) {
         val token = tokenManager.getToken()!!
         _isLoading.value = true
         viewModelScope.launch {
             try {
                 val response = api.deletePoint(id, token)
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     _isSuccess.emit(Unit)
-                }else{
+                } else {
                     _error.emit("Ошибка удаления точки продажи")
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 _error.emit("Ошибка: ${e.message}")
-            }finally {
+            } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun getPoints(){
+    fun getPoints() {
         _isLoading.value = true
         viewModelScope.launch {
-            try{
+            try {
                 val token = tokenManager.getToken().toString()
                 Log.d("token getPoints", token)
                 val response = api.getMyPoint(token)
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     _pointsOfSale.value = response.body() ?: emptyList()
                     _isSuccess.emit(Unit)
                 }
+            } catch (e: Exception) {
+                _error.emit("Ошибка: ${e.message}")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun activatePOS(posId: Long, productIds: List<Long>, isActive: Boolean) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val token = tokenManager.getToken().toString()
+                Log.d("activate pos", token)
+                val request = PosStatusRequest(isActive, productIds)
+                val response = api.updatePosStatus(posId, request, token)
+                if(response.isSuccessful){
+                    _isSuccess.emit(Unit)
+                }else{
+                    _error.emit("неизвестная ошибка")
+                }
             }catch(e: Exception){
                 _error.emit("Ошибка: ${e.message}")
+                Log.d("Error posActivate: ", "${e.message}")
             }finally {
                 _isLoading.value = false
             }

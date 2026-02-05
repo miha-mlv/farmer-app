@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.farmer.R
@@ -53,7 +55,7 @@ class ProductsBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = args.posId
+        val posId = args.posId
         val address = args.posName
 
         binding.tvPosName.text = "Адресс точки продажи: $address"
@@ -62,6 +64,7 @@ class ProductsBottomSheetFragment : BottomSheetDialogFragment() {
         setupRecyclerView()
         binding.btnStartSale.setOnClickListener {
             Log.d("ID product: ", "ID`s: ${adapterSelectProduct.getSelectedId()}}")
+            viewModel.activatePOS(posId, adapterSelectProduct.getSelectedId(), true)
         }
     }
 
@@ -79,6 +82,22 @@ class ProductsBottomSheetFragment : BottomSheetDialogFragment() {
                 launch {
                     viewModel.products.collect { products ->
                         adapterSelectProduct.updateData(products)
+                    }
+                }
+                launch {
+                    viewModel.isSuccess.collect {
+                        Toast.makeText(context, "Точка успешно активирована", Toast.LENGTH_LONG)
+                            .show()
+                        findNavController().popBackStack()
+                    }
+                }
+                launch {
+                    viewModel.error.collect { errorMessage ->
+                        Toast.makeText(
+                            context,
+                            "Ошибка активации точки: $errorMessage",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }

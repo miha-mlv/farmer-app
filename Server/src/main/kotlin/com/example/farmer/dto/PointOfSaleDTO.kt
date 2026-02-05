@@ -9,5 +9,5 @@ data class PointOfSaleRequest(
 
 data class PosStatusRequest(
     val isActive: Boolean,
-    val productIds: List<Long>? = null // Список товаров передаем при активации
+    val productsIds: List<Long>? = null // Список товаров передаем при активации
 )
