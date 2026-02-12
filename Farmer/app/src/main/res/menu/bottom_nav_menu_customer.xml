@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/catalog"
+        android:id="@+id/productsFragment"
         android:icon="@drawable/icon_my_product"
         android:title="Каталог"/>
 
     <item
-        android:id="@+id/basket"
+        android:id="@+id/basketFragment"
         android:icon="@drawable/ic_basket"
         android:title="Корзина"/>
 
     <item
-        android:id="@+id/map"
+        android:id="@+id/mapFragment"
         android:icon="@drawable/ic_map"
         android:title="Карта"/>
 
     <item
-        android:id="@+id/profile"
+        android:id="@+id/profileCustomerFragment"
         android:icon="@drawable/icon_profile"
         android:title="Профиль"/>
 </menu>

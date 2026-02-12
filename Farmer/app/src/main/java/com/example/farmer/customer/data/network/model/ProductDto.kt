@@ -1,7 +1,9 @@
 package com.example.farmer.customer.data.network.model
 
+import android.os.Parcelable
 import com.example.farmer.farmer.AddNewProductFragment
 import com.example.farmer.farmer.network.User
+import kotlinx.parcelize.Parcelize
 
 data class ProductWithPosDto(
     // Данные товара
@@ -19,6 +21,7 @@ data class ProductWithPosDto(
     val longitude: Double
 )
 
+@Parcelize
 data class Product(
     val id: Long,
     val name: String,
@@ -30,7 +33,7 @@ data class Product(
     val longitude: Double,
     val address: String,
     val posName: String
-)
+) : Parcelable
 
 fun ProductWithPosDto.toUI(): Product {
     return Product(

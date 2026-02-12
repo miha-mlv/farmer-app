@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.farmer.customer.data.local.AppDatabase
 import com.example.farmer.customer.data.network.RetrofitClientCustomer
 import com.example.farmer.customer.data.repository.ProductRepository
 import com.example.farmer.customer.ui.productsboard.adapter.ProductPagingAdapter
@@ -33,7 +36,22 @@ class ProductsFragment : Fragment() {
         ))
     }
 
-    private val adapter = ProductPagingAdapter()
+    private val adapter = ProductPagingAdapter(
+        onProductClick = { product ->
+            val action = ProductsFragmentDirections.actionProductsFragmentToProductDetailFragment(product)
+            findNavController().navigate(action)
+        },
+        onAddBasketClick = { product ->
+
+            // -------------- метод вьюмодели добавления в локальную бд
+
+            Toast.makeText(
+                requireContext(),
+                "Товар ${product.name} добавлен в корзину",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

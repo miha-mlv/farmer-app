@@ -2,6 +2,7 @@ package com.example.farmer.customer.data.network
 
 import com.example.farmer.customer.data.network.model.ProductResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CustomerApi {
@@ -15,4 +16,6 @@ interface CustomerApi {
         @Query("maxPrice") maxPrice: Double? = null
     ): ProductResponse
 
+    @GET("/api/customer/products/{id}/images")
+    suspend fun productImages(@Path("id") id: Long): List<String>
 }

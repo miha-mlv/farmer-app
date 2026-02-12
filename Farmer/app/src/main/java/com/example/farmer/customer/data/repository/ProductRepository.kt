@@ -3,6 +3,8 @@ package com.example.farmer.customer.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.farmer.customer.data.local.dao.BasketDao
+import com.example.farmer.customer.data.local.entity.BasketItem
 import com.example.farmer.customer.data.network.CustomerApi
 import com.example.farmer.customer.data.network.ProductPagingSource
 import com.example.farmer.customer.data.network.model.Product
@@ -48,4 +50,9 @@ class ProductRepository(private val apiService: CustomerApi) {
             }
         ).flow // Превращаем всё это в поток данных
     }
+
+    suspend fun getProductImages(productId: Long): List<String> {
+        return apiService.productImages(productId)
+    }
+
 }

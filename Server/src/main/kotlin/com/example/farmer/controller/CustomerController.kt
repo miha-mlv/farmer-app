@@ -2,17 +2,22 @@ package com.example.farmer.controller
 
 import com.example.farmer.dto.ProductWithPosDto
 import com.example.farmer.repository.PointOfSaleRepository
+import com.example.farmer.repository.ProductRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/customer")
-class CustomerController(private val posRepository: PointOfSaleRepository) {
+class CustomerController(
+    private val posRepository: PointOfSaleRepository,
+    private val productRepository: ProductRepository
+) {
 
     @GetMapping("/products")
     fun getProducts(
@@ -27,6 +32,11 @@ class CustomerController(private val posRepository: PointOfSaleRepository) {
             maxPrice = maxPrice,
             pageable = pageable
         )
+    }
+
+    @GetMapping("/products/{id}/images")
+    fun getProductImages(@PathVariable id: Long): List<String> {
+        return productRepository.getProductImages(id)
     }
 
 }

@@ -30,18 +30,22 @@
                     tools:background="#F5E0C3" />
 
                 <ImageButton
+                    android:id="@+id/btnToBack"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="40dp"
                     android:background="@android:color/transparent"
                     android:src="@android:drawable/ic_menu_revert"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
+                    android:id="@+id/btnShareMenu"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="40dp"
                     android:background="@android:color/transparent"
                     android:src="@android:drawable/ic_menu_share"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +54,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tvTitle"
+                android:id="@+id/tvProductName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -72,7 +76,7 @@
                 android:textColor="#2D7A32"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                app:layout_constraintBaseline_toBaselineOf="@id/tvTitle"
+                app:layout_constraintBaseline_toBaselineOf="@id/tvProductName"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="150 ₽" />
 
@@ -83,8 +87,8 @@
                 android:layout_marginTop="4dp"
                 android:textColor="#4CAF50"
                 android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@id/tvTitle"
-                app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="@id/tvProductName"
+                app:layout_constraintTop_toBottomOf="@id/tvProductName"
                 tools:text="Ферма Василича" />
 
             <View
@@ -105,7 +109,7 @@
                 android:textColor="#1A2E1A"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="@id/tvProductName"
                 app:layout_constraintTop_toBottomOf="@id/divider" />
 
             <TextView
@@ -117,7 +121,7 @@
                 android:lineSpacingExtra="6dp"
                 android:textColor="#666"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="@id/tvProductName"
                 app:layout_constraintTop_toBottomOf="@id/lblDesc"
                 tools:text="Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание " />
 
@@ -128,13 +132,13 @@
                 android:layout_marginTop="24dp"
                 android:text="Точка продажи"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="@id/tvProductName"
                 app:layout_constraintTop_toBottomOf="@id/tvDescription" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/mapCard"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
+                android:layout_height="300dp"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
@@ -143,11 +147,14 @@
                 app:layout_constraintTop_toBottomOf="@id/lblFarmer">
 
                 <com.yandex.mapkit.mapview.MapView
-                    android:id="@+id/mapview"
+                    android:id="@+id/mapviewCustomer"
                     android:layout_width="match_parent"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:layout_height="match_parent" />
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -155,20 +162,40 @@
                     android:background="@drawable/bg_address_info"
                     android:elevation="4dp"
                     android:orientation="horizontal"
-                    android:padding="12dp">
+                    android:padding="4dp"
+                    android:weightSum="6"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
                         android:src="@android:drawable/ic_menu_directions" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tvPosName"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:layout_marginEnd="4dp"
                         android:text="Moskva, Street 18, 14, arizona"
                         android:textColor="#000"
                         android:textSize="14sp"
                         android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnAddToMapProduct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="3"
+                        android:background="@drawable/bg_btn_green"
+                        android:textColor="#FFF"
+                        android:text="Отобразить на карте" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -183,36 +210,6 @@
         android:elevation="12dp"
         android:paddingHorizontal="20dp">
 
-        <LinearLayout
-            android:id="@+id/counterBox"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_counter_round"
-            android:gravity="center"
-            android:paddingHorizontal="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="—"
-                android:textSize="18sp" />
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="1"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+"
-                android:textSize="18sp" />
-        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnAddToBasket"
@@ -227,7 +224,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/counterBox"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

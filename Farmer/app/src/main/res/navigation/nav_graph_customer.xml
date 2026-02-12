@@ -3,24 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_customer"
-    app:startDestination="@id/catalog">
-
+    app:startDestination="@id/productsFragment">
     <fragment
-        android:id="@+id/catalog"
+        android:id="@+id/productsFragment"
         android:name="com.example.farmer.customer.ui.productsboard.ProductsFragment"
         android:label="fragment_products"
         tools:layout="@layout/fragment_products" >
         <action
             android:id="@+id/action_productsFragment_to_profileCustomerFragment"
-            app:destination="@id/profile" />
+            app:destination="@id/profileCustomerFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/profile"
+        android:id="@+id/productDetailFragment"
+        android:name="com.example.farmer.customer.ui.productsboard.productdetail.ProductDetailFragment"
+        android:label="fragment_product_detail"
+        tools:layout="@layout/fragment_product_detail" >
+        <argument
+            android:name="product"
+            app:argType="com.example.farmer.customer.data.network.model.Product" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileCustomerFragment"
         android:name="com.example.farmer.customer.ui.profile.ProfileCustomerFragment"
         android:label="fragment_profile_customer"
         tools:layout="@layout/fragment_profile_customer" >
         <action
             android:id="@+id/action_profileCustomerFragment_to_productsFragment"
-            app:destination="@id/catalog" />
+            app:destination="@id/productsFragment" />
     </fragment>
 </navigation>
