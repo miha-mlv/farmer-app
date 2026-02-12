@@ -66,4 +66,6 @@ dependencies {
     //карта
     implementation("com.yandex.android:maps.mobile:4.29.0-navikit")
 
+    implementation("androidx.paging:paging-runtime-ktx:3.4.0")
+
 }

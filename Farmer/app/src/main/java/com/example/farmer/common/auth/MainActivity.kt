@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.farmer.common.util.TokenManager
-import com.example.farmer.customer.MainCustomerActivity
+import com.example.farmer.customer.ui.MainCustomerActivity
 import com.example.farmer.databinding.ActivityMainBinding
 import com.example.farmer.farmer.MainFarmerActivity
 

@@ -20,7 +20,7 @@
             android:name=".farmer.MainFarmerActivity"
             android:exported="false" />
         <activity
-            android:name=".customer.MainCustomerActivity"
+            android:name=".customer.ui.MainCustomerActivity"
             android:exported="false" />
         <activity
             android:name=".common.auth.MainActivity"

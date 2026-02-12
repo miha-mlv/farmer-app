@@ -14,7 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.farmer.R
 import com.example.farmer.common.util.TokenManager
-import com.example.farmer.customer.MainCustomerActivity
+import com.example.farmer.customer.ui.MainCustomerActivity
 import com.example.farmer.databinding.FragmentLoginBinding
 import com.example.farmer.farmer.MainFarmerActivity
 import kotlinx.coroutines.launch

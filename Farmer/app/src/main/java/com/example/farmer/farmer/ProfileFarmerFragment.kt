@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.farmer.R
 import com.example.farmer.common.auth.MainActivity
 import com.example.farmer.common.util.TokenManager
-import com.example.farmer.customer.MainCustomerActivity
+import com.example.farmer.customer.ui.MainCustomerActivity
 import com.example.farmer.databinding.FragmentProfileBinding
 import com.example.farmer.farmer.network.PointOfSale
 import kotlinx.coroutines.launch
