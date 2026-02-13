@@ -41,7 +41,8 @@ class ViewModelProductDetail(
                 name = product.name,
                 priceText = product.priceText,
                 farmName = product.farmName,
-                imageUrl = product.images
+                imageUrl = product.images,
+                farmerId = product.farmerId
             )
             basketRepository.addToBasket(basketItem)
         }

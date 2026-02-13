@@ -16,4 +16,8 @@ class ProductBasketRepository(private val apiService: CustomerApi, private val b
 
     // Получаем количество товаров
     fun getBasketCount(): Flow<Int> = basketDao.getBasketCount()
+
+    suspend fun clearBasket() = basketDao.clearBasket()
+
+    suspend fun updateQuantity(id: Long, quantity: Int) = basketDao.updateQuantity(id, quantity)
 }

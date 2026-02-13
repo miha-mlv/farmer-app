@@ -18,6 +18,7 @@ data class ProductWithPosDto(
     val productName: String,
     val price: Double,
     val farmName: String, // Название фермы или точки
+    val farmerId: Long,
     val description: String?,
     val image: String?,
 

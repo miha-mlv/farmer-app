@@ -11,6 +11,7 @@ data class ProductWithPosDto(
     val productName: String,
     val price: Double,
     val farmName: String, // Название фермы или точки
+    val farmerId: Long,
     val description: String?,
     val image: String?,
 
@@ -32,7 +33,8 @@ data class Product(
     val latitude: Double,
     val longitude: Double,
     val address: String,
-    val posName: String
+    val posName: String,
+    val farmerId: Long
 ) : Parcelable
 
 fun ProductWithPosDto.toUI(): Product {
@@ -46,6 +48,7 @@ fun ProductWithPosDto.toUI(): Product {
         latitude = this.latitude,
         longitude = this.longitude,
         address = this.address,
-        posName = this.posName
+        posName = this.posName,
+        farmerId = this.farmerId
     )
 }

@@ -52,6 +52,7 @@ class MainCustomerActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.profileCustomerFragment,
+                R.id.basketFragment,
                 R.id.productsFragment -> {
                     binding.bottomNavigationView.visibility = View.VISIBLE
                 }

@@ -12,12 +12,20 @@ interface BasketDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToBasket(item: BasketItem)
 
+    @Query("UPDATE basket_products SET quantity = :quantity WHERE id = :productId")
+    suspend fun updateQuantity(productId: Long, quantity: Int)
+
     @Query("SELECT * FROM basket_products")
     fun getAllBasketItems(): Flow<List<BasketItem>>
 
     @Query("DELETE FROM basket_products WHERE id = :productId")
     suspend fun removeFromBasket(productId: Long)
 
-    @Query("SELECT SUM(quantity) FROM basket_products")
+    @Query("SELECT COUNT(*) FROM basket_products")
     fun getBasketCount(): Flow<Int>
+
+    @Query("DELETE FROM basket_products")
+    suspend fun clearBasket()
+
+
 }
