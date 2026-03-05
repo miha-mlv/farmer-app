@@ -11,8 +11,8 @@ class EmailService(private val mailSender: JavaMailSender) {
         val message = SimpleMailMessage()
         message.setTo(to)
         message.subject = "Код подтверждения регистрации"
-        message.text = "Ваш код для входа: $code. Никому не сообщайте его."
-        message.from = "malorodov7@gmail.com"
+        message.text = "Ваш код для входа: $code."
+        message.from = "mihamalorodov009@yandex.ru"
 
         mailSender.send(message)
     }

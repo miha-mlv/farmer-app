@@ -4,24 +4,29 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.farmer.R
+import com.example.farmer.customer.data.ThemeManager
 import com.example.farmer.customer.data.local.AppDatabase
 import com.example.farmer.customer.data.network.RetrofitClientCustomer
 import com.example.farmer.customer.data.repository.ProductBasketRepository
 import com.example.farmer.customer.data.repository.ProductRepository
 import com.example.farmer.customer.ui.productsboard.ProductsViewModel
-import com.example.farmer.customer.ui.productsboard.ViewModelFactory
+import com.example.farmer.customer.ui.ViewModelFactory
 import com.example.farmer.databinding.ActivityMainCustomerBinding
 import com.example.farmer.databinding.ActivityMainFarmerBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yandex.mapkit.MapKitFactory
+import kotlinx.coroutines.launch
 import kotlin.getValue
 
 class MainCustomerActivity : AppCompatActivity() {
+    private lateinit var themeManager: ThemeManager
     private val viewModel: MainCustomerViewModel by viewModels {
         ViewModelFactory(
             mapOf(
@@ -39,8 +44,20 @@ class MainCustomerActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainCustomerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MapKitFactory.setApiKey("e793a345-d9df-4603-8bc9-1a28bfc5d024")
-        MapKitFactory.initialize(this)
+        themeManager = ThemeManager(this)
+        lifecycleScope.launch {
+            themeManager.isDarkMode.collect { isDark ->
+                isDark?.let {
+                    val mode = if (it) AppCompatDelegate.MODE_NIGHT_YES
+                    else AppCompatDelegate.MODE_NIGHT_NO
+
+                    // Обновляем тему, если она отличается от текущей
+                    if (AppCompatDelegate.getDefaultNightMode() != mode) {
+                        AppCompatDelegate.setDefaultNightMode(mode)
+                    }
+                }
+            }
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityMainCustomerBinding.inflate(layoutInflater)
         setContentView(binding.root)

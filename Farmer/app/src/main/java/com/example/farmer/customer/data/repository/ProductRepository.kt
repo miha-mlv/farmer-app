@@ -26,6 +26,7 @@ class ProductRepository(private val apiService: CustomerApi) {
      * @return Flow<PagingData<Product>> — поток данных, который будет "слушать" ViewModel.
      */
     fun getProductsStream(
+        name: String? = null,
         category: String? = null,
         minPrice: Double? = null,
         maxPrice: Double? = null
@@ -43,6 +44,7 @@ class ProductRepository(private val apiService: CustomerApi) {
             pagingSourceFactory = {
                 ProductPagingSource(
                     apiService = apiService,
+                    name = name,
                     category = category,
                     minPrice = minPrice,
                     maxPrice = maxPrice

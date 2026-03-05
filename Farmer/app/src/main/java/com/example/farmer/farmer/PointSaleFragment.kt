@@ -17,6 +17,7 @@ import com.example.farmer.databinding.FragmentPoinSaleBinding
 import com.example.farmer.farmer.adapter.OnPointClickListener
 import com.example.farmer.farmer.adapter.PointOfSaleAdapter
 import com.example.farmer.farmer.network.PointOfSale
+import com.example.farmer.farmer.network.RetrofitClientFarmer
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -25,8 +26,11 @@ class PointSaleFragment : Fragment(), OnPointClickListener {
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
-            application = activity?.application
-                ?: throw Exception("Нету apllication для вьюмодели(фермер)")
+            mapOf(
+                FarmerViewModel::class.java to {
+                    FarmerViewModel(RetrofitClientFarmer.instance, requireActivity().application)
+                }
+            )
         )
     }
     private lateinit var adapter: PointOfSaleAdapter

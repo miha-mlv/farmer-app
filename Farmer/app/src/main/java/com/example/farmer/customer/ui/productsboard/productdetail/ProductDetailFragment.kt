@@ -24,7 +24,7 @@ import com.example.farmer.customer.data.network.RetrofitClientCustomer
 import com.example.farmer.customer.data.network.model.Product
 import com.example.farmer.customer.data.repository.ProductBasketRepository
 import com.example.farmer.customer.data.repository.ProductRepository
-import com.example.farmer.customer.ui.productsboard.ViewModelFactory
+import com.example.farmer.customer.ui.ViewModelFactory
 import com.example.farmer.customer.ui.productsboard.productdetail.adapter.ImagesSliderAdapter
 import com.example.farmer.databinding.FragmentProductDetailBinding
 import com.yandex.mapkit.Animation
@@ -156,8 +156,6 @@ class ProductDetailFragment : Fragment() {
             )
             == PackageManager.PERMISSION_GRANTED
         ) {
-
-            // Используем наш сохраненный locationListener
             locationManager.requestSingleUpdate(locationListener)
         } else {
             drawOnlyFarmPoint(farmPoint)
@@ -170,14 +168,11 @@ class ProductDetailFragment : Fragment() {
         val mapObjects = map.mapObjects
         mapObjects.clear()
 
-        // 1. Блокируем жесты
         map.isScrollGesturesEnabled = false
         map.isZoomGesturesEnabled = false
         map.isRotateGesturesEnabled = false
         map.isTiltGesturesEnabled = false
 
-        // 2. Добавляем маркеры.
-        // ВАЖНО: Пока НЕ ставим setIcon, чтобы исключить ошибку Bitmap_getInfo из логов
         val userPin = mapObjects.addPlacemark().apply {
             geometry = userPoint
         }
@@ -185,7 +180,6 @@ class ProductDetailFragment : Fragment() {
             geometry = farmPoint
         }
 
-        // 3. Вычисляем границы
         val boundingBox = BoundingBox(
             Point(
                 minOf(userPoint.latitude, farmPoint.latitude),
@@ -197,16 +191,12 @@ class ProductDetailFragment : Fragment() {
             )
         )
 
-        // 4. Ждем секунду и двигаем камеру
+
         binding.mapviewCustomer.postDelayed({
             if (_binding != null) {
                 val geometry = Geometry.fromBoundingBox(boundingBox)
                 val calculatedPos = map.cameraPosition(geometry)
 
-                // ЛОГИКА ПРОВЕРКИ РАССТОЯНИЯ:
-                // Если точки слишком далеко (как США и Беларусь), зум будет < 3.
-                // В таком случае мы принудительно ставим зум 3, чтобы хоть что-то увидеть,
-                // либо центрируемся на фермере.
                 val finalZoom = if (calculatedPos.zoom < 3.0f) 3.5f else calculatedPos.zoom - 0.8f
 
                 android.util.Log.d(
@@ -290,26 +280,26 @@ class ProductDetailFragment : Fragment() {
         binding.tvPosName.text = product.posName
     }
 
-    private fun setupUserLocationLayer() {
-        val mapKit = MapKitFactory.getInstance()
-
-        // Создаем слой местоположения
-        userLocationLayer = mapKit.createUserLocationLayer(binding.mapviewCustomer.mapWindow)
-        userLocationLayer.isVisible = true
-
-        // Если хотите свою иконку вместо синей точки:
-        userLocationLayer.setObjectListener(object : UserLocationObjectListener {
-            override fun onObjectAdded(view: UserLocationView) {
-                smartLocationFetch()
-                // в будущем можно добавить свои иконки
-                view.pin.setIcon(ImageProvider.fromResource(context, R.drawable.ic_nav_marker))
-                view.arrow.setIcon(ImageProvider.fromResource(context, R.drawable.ic_nav_marker))
-            }
-
-            override fun onObjectRemoved(view: UserLocationView) {}
-            override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
-        })
-    }
+//    private fun setupUserLocationLayer() {
+//        val mapKit = MapKitFactory.getInstance()
+//
+//        // Создаем слой местоположения
+//        userLocationLayer = mapKit.createUserLocationLayer(binding.mapviewCustomer.mapWindow)
+//        userLocationLayer.isVisible = true
+//
+//        // Если хотите свою иконку вместо синей точки:
+//        userLocationLayer.setObjectListener(object : UserLocationObjectListener {
+//            override fun onObjectAdded(view: UserLocationView) {
+//                smartLocationFetch()
+//                // в будущем можно добавить свои иконки
+//                view.pin.setIcon(ImageProvider.fromResource(context, R.drawable.ic_nav_marker))
+//                view.arrow.setIcon(ImageProvider.fromResource(context, R.drawable.ic_nav_marker))
+//            }
+//
+//            override fun onObjectRemoved(view: UserLocationView) {}
+//            override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
+//        })
+//    }
 
     private fun smartLocationFetch() {
         if (ContextCompat.checkSelfPermission(

@@ -8,6 +8,7 @@ import com.example.farmer.customer.data.network.model.ProductWithPosDto
 class ProductPagingSource(
     private val apiService: CustomerApi,
     private val category: String?,
+    private val name: String?,
     private val minPrice: Double?,
     private val maxPrice: Double?
 ) : PagingSource<Int, ProductWithPosDto>() {
@@ -17,6 +18,7 @@ class ProductPagingSource(
             val response = apiService.getProducts(
                 page = position,
                 size = params.loadSize,
+                name = if(name.isNullOrEmpty()) null else name,
                 category = category,
                 minPrice = minPrice,
                 maxPrice = maxPrice

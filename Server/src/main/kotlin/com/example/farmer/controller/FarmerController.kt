@@ -1,11 +1,14 @@
 package com.example.farmer.controller
 
+import com.example.farmer.dto.OrderResponse
 import com.example.farmer.dto.PointOfSaleRequest
 import com.example.farmer.dto.ProductRequest
 import com.example.farmer.dto.ProductResponse
 import com.example.farmer.dto.ResponseFarmer
 import com.example.farmer.dto.TokenRequest
 import com.example.farmer.entity.Product
+import com.example.farmer.service.JwtService
+import com.example.farmer.service.OrderService
 import com.example.farmer.service.PointOfSaleService
 import com.example.farmer.service.ProductService
 import org.springframework.http.HttpStatus
@@ -24,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/api/farmer/")
 class FarmerController(
-    private val productService: ProductService
+    private val productService: ProductService,
+    private val jwtService: JwtService,
+    private val orderService: OrderService
 ) {
 
     @PostMapping(
@@ -64,5 +69,14 @@ class FarmerController(
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
     }
+
+    @GetMapping("/my-orders")
+    fun getMyOrders(@RequestHeader("Authorization") token: String): ResponseEntity<List<OrderResponse>> {
+        val orders = orderService.getOrdersFarmer(jwtService.extractUserId(token)!!)
+        return ResponseEntity.ok(orders)
+    }
+
+//    @PostMapping
+//    fun updateOrderStatus(@RequestBody request: Order):
 
 }

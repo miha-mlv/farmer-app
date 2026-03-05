@@ -20,6 +20,7 @@ import com.example.farmer.common.util.TokenManager
 import com.example.farmer.customer.ui.MainCustomerActivity
 import com.example.farmer.databinding.FragmentProfileBinding
 import com.example.farmer.farmer.network.PointOfSale
+import com.example.farmer.farmer.network.RetrofitClientFarmer
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -38,8 +39,11 @@ class ProfileFarmerFragment : Fragment() {
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
-            application = activity?.application
-                ?: throw Exception("Нету apllication для вьюмодели(фермер)")
+            mapOf(
+                FarmerViewModel::class.java to {
+                    FarmerViewModel(RetrofitClientFarmer.instance, requireActivity().application)
+                }
+            )
         )
     }
 
@@ -166,6 +170,9 @@ class ProfileFarmerFragment : Fragment() {
 
             itemOrders.optionTitle.text = "Заказы"
             itemOrders.optionIcon.setImageResource(R.drawable.ic_order)
+            binding.itemOrders.root.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_orderFarmerFragment)
+            }
 
             itemPoints.optionTitle.text = "Точки продаж"
             itemPoints.optionIcon.setImageResource(R.drawable.icon_my_product)

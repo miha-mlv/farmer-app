@@ -39,6 +39,12 @@
         <action
             android:id="@+id/action_profileCustomerFragment_to_basketFragment"
             app:destination="@id/basketFragment" />
+        <action
+            android:id="@+id/action_profileCustomerFragment_to_profileOrdersFragment"
+            app:destination="@id/profileOrdersFragment" />
+        <action
+            android:id="@+id/action_profileCustomerFragment_to_settingsCustomerFragment"
+            app:destination="@id/settingsCustomerFragment" />
     </fragment>
     <fragment
         android:id="@+id/basketFragment"
@@ -52,4 +58,14 @@
             android:id="@+id/action_basketFragment_to_profileCustomerFragment"
             app:destination="@id/profileCustomerFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileOrdersFragment"
+        android:name="com.example.farmer.customer.ui.profile.ProfileOrdersFragment"
+        android:label="fragment_profile_orders"
+        tools:layout="@layout/fragment_profile_orders" />
+    <fragment
+        android:id="@+id/settingsCustomerFragment"
+        android:name="com.example.farmer.customer.ui.profile.SettingsCustomerFragment"
+        android:label="fragment_settings_customer"
+        tools:layout="@layout/fragment_settings_customer" />
 </navigation>

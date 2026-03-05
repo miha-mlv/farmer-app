@@ -1,4 +1,4 @@
-package com.example.farmer.customer.ui.productsboard
+package com.example.farmer.customer.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

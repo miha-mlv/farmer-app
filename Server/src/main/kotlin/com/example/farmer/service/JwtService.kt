@@ -13,12 +13,12 @@ import java.util.Date
 class JwtService {
 
     private val secretKey = Keys.hmacShaKeyFor("qwertyuiop1234567890123454321adsaf".toByteArray())
-    private val expirationTime = 86400000*2 // 24 часа в миллисекундах
+    private val expirationTime = 86400000 * 2 // 24 часа в миллисекундах
 
 
     //Генерация токена
     fun generateToken(user: User): String {
-        val claims = mapOf("role" to user.role)
+        val claims = mapOf("role" to user.role, "id" to user.id)
 
         return Jwts.builder()
             .setClaims(claims)
@@ -43,6 +43,10 @@ class JwtService {
     //Проверка на подлинность по времени
     private fun isTokenExpired(token: String): Boolean {
         return extractAllClaims(token).expiration.before(Date())
+    }
+
+    fun extractUserId(token: String): Long? {
+        return extractAllClaims(token)["id"]?.toString()?.toLong()
     }
 
     //Достаем все параметры из токена
