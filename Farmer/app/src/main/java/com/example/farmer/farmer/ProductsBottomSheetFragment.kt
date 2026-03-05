@@ -19,6 +19,7 @@ import com.example.farmer.databinding.FragmentProductsBottomSheetBinding
 import com.example.farmer.databinding.FragmentProfileBinding
 import com.example.farmer.farmer.adapter.ProductAdapter
 import com.example.farmer.farmer.adapter.SelectedProductAdapter
+import com.example.farmer.farmer.network.RetrofitClientFarmer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -28,8 +29,11 @@ class ProductsBottomSheetFragment : BottomSheetDialogFragment() {
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
-            application = activity?.application
-                ?: throw Exception("Нету apllication для вьюмодели(фермер)")
+            mapOf(
+                FarmerViewModel::class.java to {
+                    FarmerViewModel(RetrofitClientFarmer.instance, requireActivity().application)
+                }
+            )
         )
     }
 

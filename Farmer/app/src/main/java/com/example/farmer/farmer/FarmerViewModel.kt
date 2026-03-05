@@ -20,11 +20,14 @@ import com.example.farmer.farmer.network.Product
 import com.example.farmer.farmer.network.ProductRequest
 import com.example.farmer.farmer.network.RetrofitClientFarmer
 import com.example.farmer.farmer.network.TokenRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -38,9 +41,9 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading = _isLoading.asStateFlow()
     private val _isSuccess = MutableSharedFlow<Unit>()
-    var isSaleStarted: Boolean = false
-
     val isSuccess = _isSuccess.asSharedFlow()
+
+    var isSaleStarted: Boolean = false
     private val _error = MutableSharedFlow<String>()
     val error = _error.asSharedFlow()
     private val _products = MutableStateFlow<List<Product>>(emptyList())
@@ -51,19 +54,29 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
     val pointOfSale = _pointsOfSale.asStateFlow()
 
     fun saveProduct(productData: RequestBody, imageParts: List<MultipartBody.Part>) {
-        viewModelScope.launch {
-            _isLoading.value = true
+        viewModelScope.launch (Dispatchers.IO){
+            withContext(Dispatchers.Main){
+                _isLoading.value = true
+            }
             try {
                 val response = api.createProduct(productData = productData, images = imageParts)
                 if (response.isSuccessful) {
-                    _isSuccess.emit(Unit)
+                    withContext(Dispatchers.Main){
+                        _isSuccess.emit(Unit)
+                    }
                 } else {
-                    _error.emit("Ошибка: ${response.message()}(${response.code()})")
+                    withContext(Dispatchers.Main){
+                        _error.emit("Ошибка: ${response.message()}(${response.code()})")
+                    }
                 }
             } catch (e: Exception) {
-                _error.emit("Проверьте интернет-соединение: ${e.message}")
+                withContext(Dispatchers.Main){
+                    _error.emit("Проверьте интернет-соединение: ${e.message}")
+                }
             } finally {
-                _isLoading.value = false
+                withContext(Dispatchers.Main){
+                    _isLoading.value = false
+                }
             }
         }
     }
@@ -208,16 +221,5 @@ class FarmerViewModel(private val api: FarmerApi, application: Application) : Vi
                 _isLoading.value = false
             }
         }
-    }
-
-}
-
-class FarmerViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FarmerViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return FarmerViewModel(RetrofitClientFarmer.instance, application = application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

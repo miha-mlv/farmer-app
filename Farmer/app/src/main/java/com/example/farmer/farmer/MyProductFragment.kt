@@ -15,6 +15,7 @@ import com.example.farmer.R
 import com.example.farmer.databinding.FragmentLoginBinding
 import com.example.farmer.databinding.FragmentMyProductBinding
 import com.example.farmer.farmer.adapter.ProductAdapter
+import com.example.farmer.farmer.network.RetrofitClientFarmer
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -22,8 +23,11 @@ class MyProductFragment : Fragment() {
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
-            application = activity?.application
-                ?: throw Exception("Нету apllication для вьюмодели(фермер)")
+            mapOf(
+                FarmerViewModel::class.java to {
+                    FarmerViewModel(RetrofitClientFarmer.instance, requireActivity().application)
+                }
+            )
         )
     }
     private var _binding: FragmentMyProductBinding? = null
@@ -40,7 +44,7 @@ class MyProductFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMyProductBinding.inflate(inflater,container,false)
+        _binding = FragmentMyProductBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,7 +57,7 @@ class MyProductFragment : Fragment() {
         viewModel.loadMyProducts()
     }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
         productAdapter = ProductAdapter(emptyList())
         binding.rvListProduct.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -61,7 +65,7 @@ class MyProductFragment : Fragment() {
         }
     }
 
-    private fun observeViewModels(){
+    private fun observeViewModels() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Наблюдаем за списком продуктов

@@ -53,11 +53,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:backgroundTint="#2E4D32"
         android:text="Добавить"
+        android:backgroundTint="#2E4D32"
         android:textColor="@color/white"
-        app:icon="@drawable/icon_add_new_product"
         app:iconTint="@color/white"
+        app:icon="@drawable/icon_add_new_product"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

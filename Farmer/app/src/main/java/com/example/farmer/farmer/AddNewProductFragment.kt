@@ -20,6 +20,7 @@ import com.example.farmer.common.util.TokenManager
 import com.example.farmer.databinding.FragmentAddNewProductBinding
 import com.example.farmer.databinding.FragmentMyProductBinding
 import com.example.farmer.farmer.network.ProductRequest
+import com.example.farmer.farmer.network.RetrofitClientFarmer
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -32,8 +33,11 @@ class AddNewProductFragment : Fragment() {
 
     private val viewModel: FarmerViewModel by viewModels() {
         FarmerViewModelFactory(
-            application = activity?.application
-                ?: throw Exception("Нету apllication для вьюмодели(фермер)")
+            mapOf(
+                FarmerViewModel::class.java to {
+                    FarmerViewModel(RetrofitClientFarmer.instance, requireActivity().application)
+                }
+            )
         )
     }
 

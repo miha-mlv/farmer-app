@@ -41,6 +41,13 @@ enum class ProductCategory(val displayName: String) {
     DAIRY("Молочные продукты"),
     MEAT("Мясо"),
     GRAINS("Зерновые"),
-    OTHER("Другое")
+    OTHER("Другое");
+
+    companion object {
+        // Метод для поиска константы по русскому названию
+        fun fromDisplayName(name: String?): ProductCategory? {
+            return entries.find { it.displayName.equals(name, ignoreCase = true) }
+        }
+    }
 }
 

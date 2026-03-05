@@ -36,7 +36,7 @@
         <argument
             android:name="userEmail"
             app:argType="string"
-            android:defaultValue="none"/>
+            android:defaultValue=""/>
         <action
             android:id="@+id/action_verifEmailFragment_to_loginFragment2"
             app:destination="@id/loginFragment" />

@@ -14,10 +14,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.farmer.databinding.FragmentAddPointSaleBinding
+import com.example.farmer.farmer.network.RetrofitClientFarmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
@@ -47,12 +49,19 @@ import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
+import kotlin.getValue
 
 
 class AddPointSaleFragment : Fragment(), CameraListener {
 
-    private val viewModel: FarmerViewModel by activityViewModels {
-        FarmerViewModelFactory(requireActivity().application)
+    private val viewModel: FarmerViewModel by viewModels() {
+        FarmerViewModelFactory(
+            mapOf(
+                FarmerViewModel::class.java to {
+                    FarmerViewModel(RetrofitClientFarmer.instance, requireActivity().application)
+                }
+            )
+        )
     }
 
     private lateinit var userLocationLayer: UserLocationLayer

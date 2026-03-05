@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_copy_link"
+        android:title="Скопировать ссылку"
+        android:icon="@drawable/ic_copy_link" />
+</menu>

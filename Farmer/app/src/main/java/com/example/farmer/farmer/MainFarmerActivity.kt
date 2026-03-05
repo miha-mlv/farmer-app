@@ -16,9 +16,9 @@ import com.yandex.mapkit.MapKitFactory
 class MainFarmerActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainFarmerBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+//        MapKitFactory.setApiKey("e793a345-d9df-4603-8bc9-1a28bfc5d024")
+//        MapKitFactory.initialize(this)
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("e793a345-d9df-4603-8bc9-1a28bfc5d024")
-        MapKitFactory.initialize(this)
         binding = ActivityMainFarmerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val navHostFragment =

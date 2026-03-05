@@ -1,6 +1,7 @@
 package com.example.farmer.farmer.network
 
 import com.example.farmer.common.network.FarmerProfile
+import com.example.farmer.customer.data.network.model.OrderHistoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.w3c.dom.Entity
@@ -52,5 +53,8 @@ interface FarmerApi {
         @Body request: PosStatusRequest,
         @Header("token") token: String
     ): Response<Unit>
+
+    @GET("/api/farmer/my-orders")
+    suspend fun getMyOrders(@Header("Authorization") token: String): Response<List<OrderHistoryResponse>>
 
 }

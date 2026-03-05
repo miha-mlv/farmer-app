@@ -14,7 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.farmer.R
 import com.example.farmer.common.util.TokenManager
-import com.example.farmer.customer.MainCustomerActivity
+import com.example.farmer.customer.ui.MainCustomerActivity
 import com.example.farmer.databinding.FragmentLoginBinding
 import com.example.farmer.farmer.MainFarmerActivity
 import kotlinx.coroutines.launch
@@ -45,7 +45,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val email = arguments?.getString("userEmail").toString()
-        binding.etEmail.setText(email)
+        binding.etEmail.setText(if (email == "null") "" else email)
         binding.tvCreateAccount.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
