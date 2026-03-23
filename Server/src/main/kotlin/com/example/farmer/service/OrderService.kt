@@ -3,11 +3,14 @@ package com.example.farmer.service
 import com.example.farmer.dto.OrderItemDto
 import com.example.farmer.dto.OrderRequest
 import com.example.farmer.dto.OrderResponse
-import com.example.farmer.dto.ProductRequest
+import com.example.farmer.dto.OrderUpdateRequest
 import com.example.farmer.entity.Order
 import com.example.farmer.entity.OrderItem
+import com.example.farmer.entity.OrderStatus
 import com.example.farmer.repository.OrderRepository
+import com.example.farmer.repository.ProductRepository
 import com.example.farmer.repository.UserRepository
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -15,7 +18,8 @@ import org.springframework.stereotype.Service
 class OrderService(
     private val jwtService: JwtService,
     private val orderRepository: OrderRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val productRepository: ProductRepository
 ) {
 
     @Transactional
@@ -87,12 +91,42 @@ class OrderService(
                 status = order.status,
                 createdAt = order.createdAt,
                 products = order.products.map { item ->
-                    OrderItemDto(item.productId, item.name, item.price, item.quantity)
+                    OrderItemDto(item.productId, item.name, item.price, item.quantity,
+                        productRepository.getProductImages(item.productId).getOrNull(0)
+                    )
                 },
                 rejectionReason = order.rejectionReason?.text,
                 rejectionComment = order.rejectionComment,
                 rejectedAt = order.rejectedAt
             )
         }
+    }
+
+    @Transactional
+    fun updateOrderStatus(orderId: Long, orderUpdateRequest: OrderUpdateRequest){
+        val order = orderRepository.findById(orderId).orElseThrow{
+            EntityNotFoundException("Заказ с id ${orderId} не найден")
+        }
+        if(orderUpdateRequest.status.name!= OrderStatus.REJECTED.name){
+            order.apply {
+                status = orderUpdateRequest.status
+            }
+        }else{
+            order.apply {
+                status = orderUpdateRequest.status
+                rejectionReason = orderUpdateRequest.reason
+                rejectionComment = orderUpdateRequest.comment
+                rejectedAt = System.currentTimeMillis()
+            }
+
+        }
+
+        val savedOrder = orderRepository.save(order)
+        sendFcmNotification(savedOrder)
+    }
+
+    private fun sendFcmNotification(order: Order) {
+        println(">>> [FCM STUB]: Отправка уведомления покупателю ${order.customerId}")
+        println(">>> Текст: Ваш заказ #${order.id} отклонен. Причина: ${order.rejectionReason}")
     }
 }

@@ -1,6 +1,7 @@
 package com.example.farmer.controller
 
 import com.example.farmer.dto.OrderResponse
+import com.example.farmer.dto.OrderUpdateRequest
 import com.example.farmer.dto.PointOfSaleRequest
 import com.example.farmer.dto.ProductRequest
 import com.example.farmer.dto.ProductResponse
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -52,20 +54,20 @@ class FarmerController(
     }
 
     @GetMapping("/products/my")
-    fun getMyProduct(@RequestHeader("Authorization") token: String): ResponseEntity<List<Product>>{
-        return try{
+    fun getMyProduct(@RequestHeader("Authorization") token: String): ResponseEntity<List<Product>> {
+        return try {
             ResponseEntity.ok(productService.getProductByFarmer(token))
-        }catch (e: Exception){
+        } catch (e: Exception) {
             println("Ошибка при получении товаров: ${e.message}")
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
     }
 
     @GetMapping("/profile")
-    fun getProfile(@RequestHeader("Authorization") token: String): ResponseEntity<ResponseFarmer>{
-        return try{
+    fun getProfile(@RequestHeader("Authorization") token: String): ResponseEntity<ResponseFarmer> {
+        return try {
             ResponseEntity.ok(productService.getProfile(token))
-        }catch (e: Exception){
+        } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
     }
@@ -76,7 +78,10 @@ class FarmerController(
         return ResponseEntity.ok(orders)
     }
 
-//    @PostMapping
-//    fun updateOrderStatus(@RequestBody request: Order):
+    @PatchMapping("/orders/{id}/status")
+    fun updateOrderStatus(@PathVariable id: Long, @RequestBody request: OrderUpdateRequest): ResponseEntity<Any> {
+        val result = orderService.updateOrderStatus(id, request)
+        return ResponseEntity.ok().build()
+    }
 
 }

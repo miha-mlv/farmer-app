@@ -1,6 +1,7 @@
 package com.example.farmer.dto
 
 import com.example.farmer.entity.OrderStatus
+import com.example.farmer.entity.RejectionReason
 
 data class OrderRequest(
     val totalAmount: Int,
@@ -19,6 +20,13 @@ data class BasketItem(
     val farmerId: Long
 )
 
+data class OrderUpdateRequest(
+    val status: OrderStatus,
+    val reason: RejectionReason? = null,
+    val comment: String? = null,
+//    val senderId: Long
+)
+
 data class OrderResponse(
     val id: Long,
     val farmerId: Long,
@@ -35,6 +43,8 @@ data class OrderResponse(
     val rejectedAt: Long? = null
 )
 
+
+
 data class OrderItemDto(
     val productId: Long,
     val name: String,
@@ -43,19 +53,3 @@ data class OrderItemDto(
     val imageUrl: String? = null // Пригодится для иконок в списке
 )
 
-data class OrderUpdateRequest(
-    val token: String,
-    val id: Long,
-    val farmerId: Long,
-    val farmerName: String,
-    val customerId: Long,
-    val totalAmount: Int,
-    val status: OrderStatus,
-    val createdAt: Long,
-    val products: List<OrderItemDto>,
-
-    // Поля для отказа
-    val rejectionReason: String? = null,
-    val rejectionComment: String? = null,
-    val rejectedAt: Long? = null
-)

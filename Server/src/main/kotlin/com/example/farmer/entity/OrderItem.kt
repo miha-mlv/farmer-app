@@ -1,5 +1,6 @@
 package com.example.farmer.entity
 
+import com.example.farmer.dto.OrderItemDto
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType

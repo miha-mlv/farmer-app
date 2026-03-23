@@ -1,5 +1,6 @@
 package com.example.farmer.entity
 
+import com.example.farmer.dto.OrderResponse
 import jakarta.persistence.*
 
 @Entity
@@ -14,11 +15,11 @@ data class Order(
     var products: List<OrderItem> = mutableListOf(),
     val totalAmount: Int,
     @Enumerated(EnumType.STRING)
-    val status: OrderStatus = OrderStatus.PENDING,
+    var status: OrderStatus = OrderStatus.PENDING,
     val createdAt: Long,
 
     // Поля для случая отказа
-    val rejectionReason: RejectionReason? = null,
-    val rejectionComment: String? = null,
-    val rejectedAt: Long? = null // Timestamp
+    var rejectionReason: RejectionReason? = null,
+    var rejectionComment: String? = null,
+    var rejectedAt: Long? = null // Timestamp
 )
