@@ -1,24 +1,30 @@
 package com.example.farmer.common.auth
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.farmer.FCMService
 import com.example.farmer.common.network.AuthApi
 import com.example.farmer.common.network.LoginRequest
 import com.example.farmer.common.network.RegisterRequest
 import com.example.farmer.common.network.RetrofitClient
 import com.example.farmer.common.network.VerificationRequest
 import com.example.farmer.common.util.TokenManager
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class AuthViewModel(private val api: AuthApi, application: Application) : ViewModel() {
 
     private val tokenManager = TokenManager(application)
+    private var token: String? = null
+
 
     sealed class LoginState {
         object Default: LoginState()
@@ -71,17 +77,26 @@ class AuthViewModel(private val api: AuthApi, application: Application) : ViewMo
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
-                val request = LoginRequest(email = email, password = password)
+                // 1. Дожидаемся получения токена (await приостановит корутину, пока нет ответа)
+                val fcmToken = try {
+                    FirebaseMessaging.getInstance().token.await()
+                } catch (e: Exception) {
+                    Log.e("FCM", "Failed to get token", e)
+                }
+
+                // 2. Теперь fcmToken точно есть (или null), отправляем запрос
+                val request = LoginRequest(email, password, (fcmToken ?: "") as String)
                 val response = api.login(request)
                 if(response.result){
                     tokenManager.saveToken(response.token)
                     tokenManager.saveRole(response.role)
+                    tokenManager.saveUserId(response.userId)
                     _state.value = LoginState.Success(response.role)
                 }else{
                     _state.value = LoginState.Error("Неверная почта или пароль")
                 }
             }catch (e: Exception){
-                _state.value = LoginState.Error("Проблемы с соединением")
+                _state.value = LoginState.Error("Проблемы с соединением & ${e.message}")
             }
         }
     }

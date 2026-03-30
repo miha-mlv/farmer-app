@@ -42,6 +42,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mail")
     // уведомления
     implementation("com.google.firebase:firebase-admin:9.2.0")
+    // WebSocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
 }
 
 kotlin {

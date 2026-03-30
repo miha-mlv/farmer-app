@@ -52,11 +52,13 @@ data class LoginRequest(
     val email: String,
 
     @field:NotBlank(message = "Пароль не может быть пустым")
-    val password: String
+    val password: String,
+    val fcmToken: String?
 )
 
 data class LoginResponse(
     val token: String = "none",
     val result: Boolean,
-    val role: String
+    val role: String,
+    val userId: Long
 )

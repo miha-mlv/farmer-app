@@ -17,5 +17,10 @@ interface UserRepository : JpaRepository<User, Long> {
     @Query("UPDATE User u SET u.isEnabled = :isEnabled WHERE u.email = :email")
     fun updateIsEnabled(email: String, isEnabled: Boolean)
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.fcmToken = :fcmToken WHERE u.email = :email")
+    fun updateFcmToken(fcmToken: String, email: String)
+
 
 }

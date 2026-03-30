@@ -62,10 +62,28 @@
         android:id="@+id/profileOrdersFragment"
         android:name="com.example.farmer.customer.ui.profile.ProfileOrdersFragment"
         android:label="fragment_profile_orders"
-        tools:layout="@layout/fragment_profile_orders" />
+        tools:layout="@layout/fragment_profile_orders" >
+        <action
+            android:id="@+id/action_profileOrdersFragment_to_detailOrderCustomerFragment"
+            app:destination="@id/detailOrderCustomerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsCustomerFragment"
         android:name="com.example.farmer.customer.ui.profile.SettingsCustomerFragment"
         android:label="fragment_settings_customer"
         tools:layout="@layout/fragment_settings_customer" />
+    <fragment
+        android:id="@+id/detailOrderCustomerFragment"
+        android:name="com.example.farmer.customer.ui.profile.DetailOrderCustomerFragment"
+        android:label="fragment_detail_order_customer"
+        tools:layout="@layout/fragment_detail_order_customer" >
+        <action
+            android:id="@+id/action_detailOrderCustomerFragment_to_chatFragment2"
+            app:destination="@id/chatFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment2"
+        android:name="com.example.farmer.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 </navigation>

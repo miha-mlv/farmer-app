@@ -19,7 +19,8 @@ class OrderService(
     private val jwtService: JwtService,
     private val orderRepository: OrderRepository,
     private val userRepository: UserRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val fcmService: FCMService
 ) {
 
     @Transactional
@@ -28,33 +29,42 @@ class OrderService(
         val createdOrders = mutableListOf<Order>()
         val customerId = jwtService.extractUserId(token = request.token)
 
-            productsByFarmer.forEach { (farmerId, basketItems) ->
-                val orderItems = basketItems.map {
-                    OrderItem(
-                        productId = it.id,
-                        name = it.name,
-                        price = it.priceText.dropLast(3).toInt(),
-                        quantity = it.quantity
-                    )
-                }
-
-                val newOrder = Order(
-                    customerId = customerId!!,
-                    farmerId = farmerId,
-                    totalAmount = orderItems.sumOf { it.price * it.quantity },
-                    createdAt = System.currentTimeMillis(),
-                    products = orderItems
+        productsByFarmer.forEach { (farmerId, basketItems) ->
+            val orderItems = basketItems.map {
+                OrderItem(
+                    productId = it.id,
+                    name = it.name,
+                    price = it.priceText.dropLast(3).toInt(),
+                    quantity = it.quantity
                 )
-
-                createdOrders.add(orderRepository.save(newOrder))
-
-                // 3. TODO: Тут отправляем Push-уведомление фермеру (farmerId)
             }
+
+            val newOrder = Order(
+                customerId = customerId!!,
+                farmerId = farmerId,
+                totalAmount = orderItems.sumOf { it.price * it.quantity },
+                createdAt = System.currentTimeMillis(),
+                products = orderItems
+            )
+
+            createdOrders.add(orderRepository.save(newOrder))
+
+            val farmerTokenFCM = userRepository.findById(farmerId).get().fcmToken
+
+            if (farmerTokenFCM!!.isNotEmpty()) {
+                fcmService.sendNotification(
+                    token = farmerTokenFCM,
+                    title = "Новый заказ",
+                    message = "Вам поступил новый заказ на сумму: ${newOrder.totalAmount}",
+                    orderId = 0
+                )
+            }
+        }
 
         return createdOrders
     }
 
-    fun getOrdersCustomer(customerId: Long): List<OrderResponse>{
+    fun getOrdersCustomer(customerId: Long): List<OrderResponse> {
         val orders = orderRepository.findAllByCustomerIdOrderByCreatedAtDesc(customerId)
 
         return orders.map { order ->
@@ -68,7 +78,10 @@ class OrderService(
                 status = order.status,
                 createdAt = order.createdAt,
                 products = order.products.map { item ->
-                    OrderItemDto(item.productId, item.name, item.price, item.quantity)
+                    OrderItemDto(
+                        item.productId, item.name, item.price, item.quantity,
+                        productRepository.getProductImages(item.productId).getOrNull(0)
+                    )
                 },
                 rejectionReason = order.rejectionReason?.text,
                 rejectionComment = order.rejectionComment,
@@ -77,7 +90,7 @@ class OrderService(
         }
     }
 
-    fun getOrdersFarmer(farmerId: Long): List<OrderResponse>{
+    fun getOrdersFarmer(farmerId: Long): List<OrderResponse> {
         val orders = orderRepository.findAllByFarmerIdOrderByCreatedAtDesc(farmerId)
 
         return orders.map { order ->
@@ -91,7 +104,8 @@ class OrderService(
                 status = order.status,
                 createdAt = order.createdAt,
                 products = order.products.map { item ->
-                    OrderItemDto(item.productId, item.name, item.price, item.quantity,
+                    OrderItemDto(
+                        item.productId, item.name, item.price, item.quantity,
                         productRepository.getProductImages(item.productId).getOrNull(0)
                     )
                 },
@@ -103,15 +117,15 @@ class OrderService(
     }
 
     @Transactional
-    fun updateOrderStatus(orderId: Long, orderUpdateRequest: OrderUpdateRequest){
-        val order = orderRepository.findById(orderId).orElseThrow{
+    fun updateOrderStatus(orderId: Long, orderUpdateRequest: OrderUpdateRequest) {
+        val order = orderRepository.findById(orderId).orElseThrow {
             EntityNotFoundException("Заказ с id ${orderId} не найден")
         }
-        if(orderUpdateRequest.status.name!= OrderStatus.REJECTED.name){
+        if (orderUpdateRequest.status.name != OrderStatus.REJECTED.name) {
             order.apply {
                 status = orderUpdateRequest.status
             }
-        }else{
+        } else {
             order.apply {
                 status = orderUpdateRequest.status
                 rejectionReason = orderUpdateRequest.reason
@@ -122,11 +136,9 @@ class OrderService(
         }
 
         val savedOrder = orderRepository.save(order)
-        sendFcmNotification(savedOrder)
+
+        fcmService.sendNotification(userRepository.findById(order.customerId).get().fcmToken!!, "Заказ #FA-${order.id}", "Статус заказа обновлен",0)
     }
 
-    private fun sendFcmNotification(order: Order) {
-        println(">>> [FCM STUB]: Отправка уведомления покупателю ${order.customerId}")
-        println(">>> Текст: Ваш заказ #${order.id} отклонен. Причина: ${order.rejectionReason}")
-    }
+
 }

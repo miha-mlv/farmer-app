@@ -1,31 +1,31 @@
-package com.example.farmer.farmer
+package com.example.farmer.customer.ui.profile
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.graphics.toColorInt
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.farmer.R
 import com.example.farmer.customer.data.network.model.OrderHistoryResponse
 import com.example.farmer.customer.data.network.model.OrderStatus
-import com.example.farmer.databinding.FragmentDetailOrderFarmerBinding
-import com.example.farmer.farmer.adapter.OrderDetailAdapter
+import com.example.farmer.databinding.FragmentDetailOrderCustomerBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.core.graphics.toColorInt
-import androidx.core.os.bundleOf
 
-class DetailOrderFarmerFragment : Fragment() {
 
-    private var _binding: FragmentDetailOrderFarmerBinding? = null
+class DetailOrderCustomerFragment : Fragment() {
+
+
+    private var _binding: FragmentDetailOrderCustomerBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = OrderDetailAdapter()
+    private val adapter = com.example.farmer.customer.ui.profile.adapter.OrderDetailAdapter()
 
     private val dateFormat = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale("ru"))
 
@@ -38,13 +38,12 @@ class DetailOrderFarmerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentDetailOrderFarmerBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailOrderCustomerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
@@ -62,19 +61,17 @@ class DetailOrderFarmerFragment : Fragment() {
         }
         binding.btnChat.setOnClickListener {
             val bundle = bundleOf(
-                "FARM_NAME" to ("Покупатель"),
-                "SENDER_ID" to (order?.farmerId ?: 0L),
+                "FARM_NAME" to (order?.farmerName ?: "Фермер"),
+                "SENDER_ID" to (order?.customerId ?: 0L),
                 "ORDER_ID" to (order?.id ?: 0L),
-                "RECEIVER_ID" to (order?.customerId ?: 0L)
-            ) // передать имя покупателя
+                "RECEIVER_ID" to (order?.farmerId ?: 0L)
+            )
+
             findNavController().navigate(
-                R.id.action_detailOrderFarmerFragment_to_chatFragment,
+                R.id.action_detailOrderCustomerFragment_to_chatFragment2,
                 bundle
             )
-            //Переход к чату
-            Toast.makeText(requireActivity(), "Переход к чату", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun setupUI(order: OrderHistoryResponse) {
@@ -119,9 +116,11 @@ class DetailOrderFarmerFragment : Fragment() {
     }
 
     companion object {
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            DetailOrderFarmerFragment().apply {
+            DetailOrderCustomerFragment().apply {
+
             }
     }
 

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f9f8f6"
-    tools:context=".farmer.DetailOrderFarmerFragment">
-
+    tools:context=".customer.ui.profile.DetailOrderCustomerFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -80,9 +79,9 @@
                 android:id="@+id/rvProducts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_marginTop="12dp"
-                android:nestedScrollingEnabled="false" />
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -181,7 +180,7 @@
         android:layout_height="60dp"
         android:layout_margin="20dp"
         android:backgroundTint="#2a5a30"
-        android:text="Чат с покупателем"
+        android:text="Чат с фермером"
         android:textAllCaps="false"
         app:cornerRadius="16dp"
         app:iconGravity="textStart"

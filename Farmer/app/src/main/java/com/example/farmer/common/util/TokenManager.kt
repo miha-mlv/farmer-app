@@ -50,4 +50,12 @@ class TokenManager(context: Context) {
         sharedPreferences.edit{ clear() }
     }
 
+    fun saveUserId(userId: Long){
+        sharedPreferences.edit {putLong("userId", userId)}
+    }
+
+    fun getUserId(): Long? {
+        return sharedPreferences.getLong("userId", -1L)
+    }
+
 }

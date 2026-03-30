@@ -27,5 +27,6 @@ data class User(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var isEnabled: Boolean = false,
     var verificationCode: String? = null,
-    val farmName: String? = null
+    val farmName: String? = null,
+    val fcmToken: String?
 )

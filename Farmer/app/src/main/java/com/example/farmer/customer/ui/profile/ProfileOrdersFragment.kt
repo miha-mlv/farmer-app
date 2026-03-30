@@ -66,9 +66,8 @@ class ProfileOrdersFragment : Fragment() {
     private fun setupRecyclerView() {
         // Инициализируем адаптер с обработкой клика
         orderHistoryAdapter = OrderHistoryAdapter { order ->
-            // Например, переходим на экран деталей
-            val bundle = bundleOf("orderId" to order.id)
-            //findNavController().navigate(R.id.action_history_to_details, bundle)
+            val bundle = bundleOf("SELECTED_ORDER" to order)
+            findNavController().navigate(R.id.action_profileOrdersFragment_to_detailOrderCustomerFragment, bundle)
         }
 
         binding.rvOrders.apply {
