@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -16,11 +18,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.farmer.R
+import com.example.farmer.customer.data.network.model.OrderStatus
 import com.example.farmer.customer.ui.profile.adapter.OrderHistoryAdapter
 import com.example.farmer.databinding.FragmentOrderFarmerBinding
 import com.example.farmer.farmer.adapter.OrderAdapter
+import com.example.farmer.farmer.network.RejectionReason
 import com.example.farmer.farmer.network.RetrofitClientFarmer
 import com.example.farmer.farmer.repository.OrderRepository
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
 
@@ -61,16 +66,17 @@ class OrderFarmerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Логика кнопки назад
         binding.topAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
+        // Инициализация статусов заказов
         val categories =
             listOf("Все", "В ожидании", "Активные", "Отклоненные", "Завершенные", "Отмененные")
         categories.forEach { category ->
             val button = layoutInflater.inflate(R.layout.container_item, null) as Button
             button.text = category
-
             button.setOnClickListener {
                 selectCategory(button)
                 applyFilter(button.text.toString())
@@ -89,15 +95,55 @@ class OrderFarmerFragment : Fragment() {
         viewModel.getMyOrders()
     }
 
+    private fun showRejectDialog(orderId: Long) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reject_order, null)
+        val spinner = dialogView.findViewById<Spinner>(R.id.spinnerReasons)
+        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+
+        // Настраиваем Spinner на основе твоего Enum RejectionReason
+        val reasons = RejectionReason.entries.toTypedArray()
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            reasons.map { it.text })
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Отмена заказа #$orderId")
+            .setView(dialogView)
+            .setPositiveButton("Отклонить") { _, _ ->
+                val selectedReason = reasons[spinner.selectedItemPosition]
+                val comment = etComment.text.toString()
+
+
+                viewModel.rejectOrder(orderId, selectedReason, comment)
+            }
+            .setNegativeButton("Назад", null)
+            .show()
+    }
+
     private fun setupRecyclerView() {
+        orderAdapter = OrderAdapter(
+            // Клик по самому заказу (детальная информация заказа -> переход к чату)
+            onClick = { order ->
+                val bundle = bundleOf("SELECTED_ORDER" to order)
+                findNavController().navigate(R.id.action_orderFarmerFragment_to_detailOrderFarmerFragment, bundle)
+                Toast.makeText(requireContext(), "Переход к заказу #${order.id}", Toast.LENGTH_SHORT).show()
+            },
 
-        orderAdapter = OrderAdapter(onAcceptClick = {
-            Toast.makeText(requireContext(), "acceptn", Toast.LENGTH_SHORT).show()
-        }) { order ->
+            // Клик по кнопке "Принять" (подтвердить заказа)
+            onAcceptClick = { order ->
+                viewModel.acceptOrder(order.id)
+                Toast.makeText(requireContext(), "Заказ #${order.id} принят", Toast.LENGTH_SHORT).show()
+            },
 
-            val bundle = bundleOf("orderId" to order.id)
-            //findNavController().navigate(R.id.action_history_to_details, bundle)
-        }
+            // Клик по кнопке "Отклонить" (отклонить заказ)
+            onCancelClick = { order ->
+                showRejectDialog(order.id)
+                Toast.makeText(requireContext(), "Заказ #${order.id} отклонен", Toast.LENGTH_SHORT).show()
+            }
+        )
 
         binding.rvOrders.apply {
             adapter = orderAdapter
@@ -105,9 +151,9 @@ class OrderFarmerFragment : Fragment() {
         }
     }
 
-    private fun observeViewModel(){
+    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.orderArr.collect { orders ->
                         orderAdapter.submitList(orders)
@@ -127,27 +173,27 @@ class OrderFarmerFragment : Fragment() {
 
             "В ожидании" -> {
                 filterCurrentOrders()
-                showMessage("Показаны текущие заказы")
+                showMessage("Показаны не подтвержденные заказы ")
             }
 
             "Активные" -> {
                 filterCompletedOrders()
-                showMessage("Показаны завершенные заказы")
+                showMessage("Показаны активные заказы")
             }
 
             "Отклоненные" -> {
                 filterCancelledOrders()
-                showMessage("Показаны отмененные заказы")
+                showMessage("Показаны отклоненные заказы")
             }
 
             "Завершенные" -> {
                 filterByLastMonth()
-                showMessage("Заказы за последний месяц")
+                showMessage("Показаны завершенные заказы")
             }
 
             "Отмененные" -> {
                 filterByLastSixMonths()
-                showMessage("Заказы за последние полгода")
+                showMessage("Показаны отмененные заказы")
             }
         }
     }

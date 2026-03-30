@@ -20,12 +20,18 @@ class SecurityConfig {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { it.disable() } // Обязательно для Postman/Android
+            .csrf { it.disable() }
+            .cors { } // Важно для эмулятора
             .authorizeHttpRequests { auth ->
-                // Разрешаем всем доступ к регистрации и верификации
-                auth.requestMatchers("/api/**").permitAll()
+                // Сначала самые специфичные пути
+                auth.requestMatchers("/ws-chat/**").permitAll()
+                auth.requestMatchers("/api/chat/**").permitAll()
                 auth.requestMatchers("/images/**").permitAll()
-                // Все остальные запросы (товары, заказы) требуют токен
+
+                // Потом общие
+                auth.requestMatchers("/api/**").permitAll()
+
+                // И в конце всё остальное
                 auth.anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

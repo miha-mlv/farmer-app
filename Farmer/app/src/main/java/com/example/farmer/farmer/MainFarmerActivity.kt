@@ -1,6 +1,7 @@
 package com.example.farmer.farmer
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -24,6 +25,17 @@ class MainFarmerActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nhfFarmer) as NavHostFragment
         val navController = navHostFragment.navController
+        navController.addOnDestinationChangedListener { _, destination, arguments ->
+            when (destination.id) {
+                R.id.chatFragment, R.id.orderFarmerFragment, R.id.pointSaleFragment, R.id.detailOrderFarmerFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+
+                else -> {
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                }
+            }
+        }
 
         binding.bottomNavigationView.setupWithNavController(navController)
 

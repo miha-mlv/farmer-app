@@ -1,5 +1,6 @@
 package com.example.farmer.farmer.network
 
+import com.example.farmer.customer.data.network.model.OrderStatus
 import com.example.farmer.farmer.AddNewProductFragment
 import java.time.LocalDateTime
 
@@ -75,3 +76,16 @@ data class PosStatusRequest(
     val isActive: Boolean,
     val productsIds: List<Long>? = null
 )
+
+data class OrderUpdateRequest(
+    val status: OrderStatus,
+    val reason: RejectionReason? = null,
+    val comment: String? = null
+)
+
+enum class RejectionReason(val text: String) {
+    OUT_OF_STOCK("Товара нет в наличии"),
+    DONT_WORK_NOW("Продажи временно закрыты"),
+    PRICE_MISMATCH("Некорректная цена"),
+    OTHER("Другое (см. комментарий)")
+}

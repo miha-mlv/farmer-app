@@ -34,7 +34,7 @@ class AuthController(private val authService: AuthService) {
         return try{
             authService.login(request)
         }catch (e: Exception){
-            LoginResponse("0", false, e.message.toString())
+            LoginResponse("0", false, e.message.toString(), -1L)
         }
     }
 

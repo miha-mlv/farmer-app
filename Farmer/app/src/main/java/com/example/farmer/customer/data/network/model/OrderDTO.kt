@@ -1,6 +1,8 @@
 package com.example.farmer.customer.data.network.model
 
+import android.os.Parcelable
 import com.example.farmer.customer.data.local.entity.BasketItem
+import kotlinx.parcelize.Parcelize
 
 data class OrderRequest(
     val totalAmount: Int,
@@ -57,6 +59,7 @@ data class CustomerProfileResponse(
     val customerName: String
 )
 
+@Parcelize
 data class OrderHistoryResponse(
     val id: Long,
     val farmerId: Long,
@@ -71,12 +74,13 @@ data class OrderHistoryResponse(
     val rejectionReason: String? = null,
     val rejectionComment: String? = null,
     val rejectedAt: Long? = null
-)
+) : Parcelable
 
+@Parcelize
 data class OrderItemDto(
     val productId: Long,
     val name: String,
     val price: Int,
     val quantity: Int,
-    val imageUrl: String? = null // Пригодится для иконок в списке
-)
+    val imageUrl: String? = null
+) : Parcelable

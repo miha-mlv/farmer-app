@@ -84,6 +84,24 @@
         android:id="@+id/orderFarmerFragment"
         android:name="com.example.farmer.farmer.OrderFarmerFragment"
         android:label="fragment_order_farmer"
-        tools:layout="@layout/fragment_order_farmer" />
+        tools:layout="@layout/fragment_order_farmer" >
+        <action
+            android:id="@+id/action_orderFarmerFragment_to_detailOrderFarmerFragment"
+            app:destination="@id/detailOrderFarmerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailOrderFarmerFragment"
+        android:name="com.example.farmer.farmer.DetailOrderFarmerFragment"
+        android:label="fragment_detail_order_farmer"
+        tools:layout="@layout/fragment_detail_order_farmer" >
+        <action
+            android:id="@+id/action_detailOrderFarmerFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.farmer.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 
 </navigation>

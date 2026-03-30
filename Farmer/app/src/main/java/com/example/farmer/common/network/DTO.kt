@@ -32,11 +32,13 @@ data class VerificationResponse(
 
 data class LoginRequest(
     val email: String,
-    val password: String
+    val password: String,
+    val fcmToken: String
 )
 
 data class LoginResponse(
     val token: String,
     val result: Boolean,
-    val role: String
+    val role: String,
+    val userId: Long
 )

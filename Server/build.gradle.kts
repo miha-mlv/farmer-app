@@ -40,6 +40,10 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     //Для отправки кода на почту
     implementation("org.springframework.boot:spring-boot-starter-mail")
+    // уведомления
+    implementation("com.google.firebase:firebase-admin:9.2.0")
+    // WebSocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
 }
 
 kotlin {

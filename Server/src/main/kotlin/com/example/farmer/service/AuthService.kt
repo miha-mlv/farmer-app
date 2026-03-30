@@ -12,6 +12,7 @@ import org.apache.logging.log4j.message.SimpleMessage
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import kotlin.math.log
 
 /**
  * Service слой для логики аутентификации
@@ -40,7 +41,8 @@ class AuthService(
             passwordHash = passwordEncoder.encode(request.password).toString(),
             role = request.role,
             farmName = request.farmName,
-            verificationCode = verificationCode
+            verificationCode = verificationCode,
+            fcmToken = null
         )
 
         emailService.sendVerificationCode(request.email, verificationCode)
@@ -80,12 +82,18 @@ class AuthService(
             throw RuntimeException("Неверный email или пароль")
         }
 
+        if(request.fcmToken == null){
+            throw NullPointerException("fcm token is null")
+        }
+
+        userRepository.updateFcmToken(request.fcmToken, request.email)
         val token = jwtService.generateToken(user)
 
         return LoginResponse(
             token = token,
             result = true,
-            role = user.role
+            role = user.role,
+            user.id!!
         )
     }
 }

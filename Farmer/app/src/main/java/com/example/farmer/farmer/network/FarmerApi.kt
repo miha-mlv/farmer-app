@@ -57,4 +57,8 @@ interface FarmerApi {
     @GET("/api/farmer/my-orders")
     suspend fun getMyOrders(@Header("Authorization") token: String): Response<List<OrderHistoryResponse>>
 
+    @PATCH("/api/farmer/orders/{id}/status")
+    suspend fun updateOrderStatus(@Path("id") id: Long, @Body request: OrderUpdateRequest): Response<Unit>
+
+
 }

@@ -19,9 +19,6 @@ class OrderAdapter(
     private val onClick: ((OrderHistoryResponse) -> Unit)? = null,
     private val onAcceptClick: (OrderHistoryResponse) -> Unit,
     private val onCancelClick: ((OrderHistoryResponse) -> Unit)? = null,
-    private val onReorderClick: ((OrderHistoryResponse) -> Unit)? = null,
-    private val onTrackClick: ((OrderHistoryResponse) -> Unit)? = null,
-    private val onReviewClick: ((OrderHistoryResponse) -> Unit)? = null
 ) : ListAdapter<OrderHistoryResponse, RecyclerView.ViewHolder>(OrderDiffCallback) {
 
     companion object {
